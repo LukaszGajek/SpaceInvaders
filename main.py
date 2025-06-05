@@ -2,16 +2,22 @@ import pygame
 import keyboard
 
 from player import Player
+from player import PlayerBullet
+
+
 
 pygame.init()
 width, height = 1000, 500
 screen = pygame.display.set_mode((width, height))
-#player = pygame.image.load('C:/Szkoła/Informatyka/Python/SpaceInvaders/assets/player.png')
 
 pygame.display.set_caption('Simple Window')
-background_color = (200, 200, 200)  # Light gray
+background_color = (200, 200, 200)  
 
-gracz = Player([300,440]) #x,y
+bullets = []
+
+gracz = Player([width/2,height*0.88]) #x,y
+
+
 
 running = True
 while running:
@@ -20,22 +26,37 @@ while running:
             running = False
     
     try:
-        if keyboard.is_pressed('a'):
+        if keyboard.is_pressed('a') and gracz.rect.left >= 0:
             gracz.shift_left() 
-            pygame.time.delay(2)
-        if keyboard.is_pressed('d'):
+        if keyboard.is_pressed('d') and gracz.rect.left <= width - 100:
             gracz.shift_right()
+            
+        if keyboard.is_pressed('space') and len(bullets) < 1:
+            pocisk = gracz.shoot()
+            bullets.append(pocisk)
             pygame.time.delay(2)
 
     except:
         pass
      
-    #gracz.shift_left() 
-
            
+    for bullet in bullets:
+        bullet.move()
+        if bullet.rect.top <= 0:
+            bullets.remove(bullet)   
+        
+       
+           
+    
     screen.fill(background_color)
     screen.blit(gracz.image,gracz.rect)
+    for bullet in bullets:
+        screen.blit(bullet.image,bullet.rect)
+
+    
+
     
     pygame.display.update()
+    pygame.time.delay(2)
 
 pygame.quit()
