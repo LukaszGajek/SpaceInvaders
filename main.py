@@ -3,6 +3,7 @@ import keyboard
 import time
 from player import Player
 from player import PlayerBullet
+from player import Life
 from enemies import Enemy
 
 
@@ -15,8 +16,13 @@ background_color = (200, 200, 200)
 
 bullets = []
 enemies = []
+player_health = []
+projectiles = []
 
-player = Player([width/2,height*0.88]) #x,y
+player = Player([width/2,height*0.88]) #x,
+
+for i in range(player.hp):
+    player_health.append(Life([5 + i * 40, 10]))
 
 enemies.append(Enemy([width/2,height*0.1]))
 enemies.append(Enemy([width/3,height*0.1]))
@@ -54,19 +60,40 @@ while running:
         if pocisk is not None:
             bullets.append(pocisk)
 
-    
+    for enemy in enemies:
+        proj = enemy.shoot()
+        if proj is not None:
+            projectiles.append(proj)
      
            
     for bullet in bullets:
         bullet.move(delta)
         if bullet.rect.top <= 0:
             bullet.is_alive = False
-      
+            
+            
     for bullet in bullets:
         for enemy in enemies:
             if enemy.rect.colliderect(bullet.rect):
                 enemy.get_hit()
                 bullet.is_alive = False
+    
+    for projectile in projectiles:
+        projectile.move(delta)
+        if projectile.rect.top >= height:
+            projectile.is_alive = False
+    
+    for projectile in projectiles:
+        if projectile.rect.colliderect(player.rect):
+            player_health.pop()
+            projectile.is_alive = False
+            if player_health == 0:
+                running = False
+        
+      
+    
+    
+    
 
 
       
@@ -77,6 +104,7 @@ while running:
            
     bullets = [bullet for bullet in bullets if bullet.is_alive]
     enemies = [enemy for enemy in enemies if enemy.is_alive]
+    projectiles = [projectile for projectile in projectiles if projectile.is_alive]
 
     
 
@@ -86,6 +114,12 @@ while running:
         screen.blit(bullet.image,bullet.rect)
     for enemy in enemies:
         screen.blit(enemy.image,enemy.rect)
+    for hp in player_health:
+        screen.blit(hp.image,hp.rect)
+    for projectile in projectiles:
+            screen.blit(projectile.image,projectile.rect)
+
+
 
     
 
