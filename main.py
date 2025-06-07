@@ -1,6 +1,8 @@
 import pygame
 import keyboard
 import time
+import random
+
 from player import Player
 from player import PlayerBullet
 from player import Life
@@ -18,18 +20,16 @@ bullets = []
 enemies = []
 player_health = []
 projectiles = []
+drops = []
 
 player = Player([width/2,height*0.88]) #x,
 
-for i in range(player.hp):
-    player_health.append(Life([5 + i * 40, 10]))
+
 
 enemies.append(Enemy([width/2,height*0.1]))
 enemies.append(Enemy([width/3,height*0.1]))
 enemies.append(Enemy([width/4,height*0.1]))
 enemies.append(Enemy([width/2.5,height*0.1]))
-
-
 
 
 
@@ -43,12 +43,14 @@ while running:
     delta = start - last
     
     
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     
+    player_health = []
     
+    for i in range(player.hp):
+        player_health.append(Life([5 + i * 40, 10]))
     
     if keyboard.is_pressed('a') and player.rect.left >= 0: #obsluga kbm pygamea
         player.shift_left(delta) 
@@ -59,6 +61,10 @@ while running:
         pocisk = player.shoot()
         if pocisk is not None:
             bullets.append(pocisk)
+
+
+    
+
 
     for enemy in enemies:
         proj = enemy.shoot()
@@ -85,30 +91,38 @@ while running:
     
     for projectile in projectiles:
         if projectile.rect.colliderect(player.rect):
-            player_health.pop()
+            player.get_hit()
             projectile.is_alive = False
-            if player_health == 0:
+            if player.hp == 0:
                 running = False
-        
-      
-    
-    
-    
-
-
-      
         
     for enemy in enemies:
         if enemy.hp <= 0:
             enemy.is_alive = False
+            rand = random.randint(0,3)
+            if rand == 2:
+                drop = enemy.drop_life()
+                drops.append(drop)
+                
+    for drop in drops:
+        drop.move(delta)
+        if drop.rect.top >= height:
+            drop.is_alive = False
+            
+    for drop in drops:
+        if drop.rect.colliderect(player.rect):
+            player.get_healed()
+            drop.is_alive = False
+            
            
     bullets = [bullet for bullet in bullets if bullet.is_alive]
     enemies = [enemy for enemy in enemies if enemy.is_alive]
     projectiles = [projectile for projectile in projectiles if projectile.is_alive]
-
+    drops = [drop for drop in drops if drop.is_alive]
     
 
     screen.fill(background_color)
+    
     screen.blit(player.image,player.rect)
     for bullet in bullets:
         screen.blit(bullet.image,bullet.rect)
@@ -118,6 +132,9 @@ while running:
         screen.blit(hp.image,hp.rect)
     for projectile in projectiles:
             screen.blit(projectile.image,projectile.rect)
+    for drop in drops:
+            screen.blit(drop.image, drop.rect)
+
 
 
 

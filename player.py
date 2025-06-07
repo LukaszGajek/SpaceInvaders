@@ -26,7 +26,10 @@ class Player (pygame.sprite.Sprite):
         else:
             return None
     def get_hit(self):
-            self.hp -= 1
+        self.hp -= 1
+    def get_healed(self):
+        self.hp += 1
+
     
         
 
@@ -42,7 +45,7 @@ class PlayerBullet (pygame.sprite.Sprite):
 
     
     def move(self, delta):
-        self.rect.top -=400*delta
+        self.rect.top -=500*delta
 
 class Life (pygame.sprite.Sprite):
     def __init__(self, position):
@@ -52,3 +55,6 @@ class Life (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left,self.rect.top = position
         self.is_alive = True
+    
+    def move(self,delta):
+        self.rect.top += 250*delta
