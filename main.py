@@ -22,7 +22,7 @@ player_health = []
 projectiles = []
 drops = []
 
-player = Player([width/2,height*0.88]) #x,
+player = Player([width/2,height*0.92]) #x,
 
 
 
@@ -85,7 +85,7 @@ while running:
                 bullet.is_alive = False
     
     for projectile in projectiles:
-        projectile.move(delta)
+        projectile.move(delta) 
         if projectile.rect.top >= height:
             projectile.is_alive = False
     
@@ -103,6 +103,9 @@ while running:
             if rand == 2:
                 drop = enemy.drop_life()
                 drops.append(drop)
+                
+    for enemy in enemies:
+        enemy.move(delta)
                 
     for drop in drops:
         drop.move(delta)
