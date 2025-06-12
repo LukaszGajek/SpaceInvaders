@@ -26,10 +26,10 @@ player = Player([width/2,height*0.92]) #x,
 
 
 
-enemies.append(Enemy([width/2,height*0.1]))
-enemies.append(Enemy([width/3,height*0.1]))
+enemies.append(Enemy([width/2,height*0.2]))
+enemies.append(Enemy([width/3,height*0.15]))
 enemies.append(Enemy([width/4,height*0.1]))
-enemies.append(Enemy([width/2.5,height*0.1]))
+enemies.append(Enemy([width/2.5,height*0.25]))
 
 
 

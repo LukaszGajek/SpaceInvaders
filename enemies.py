@@ -40,7 +40,7 @@ class Enemy (pygame.sprite.Sprite):
         shooting_randomizer = random.randint(0,1000)
         last = self.last_shot_time
         delta = time.monotonic() - last
-        if delta > 2 and shooting_randomizer >= 995:
+        if delta > 1 and shooting_randomizer >= 995:
             self.last_shot_time = time.monotonic()
             return EnemyBullet([self.rect.left + 25, self.rect.top + 20], rand) #zmienić
         else:
@@ -74,7 +74,7 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.shot_angle = shot_angle
     
     def move(self, delta):
-        self.rect.top += 150*delta
+        self.rect.top += 300*delta
         self.rect.left += self.shot_angle*delta
     
     
