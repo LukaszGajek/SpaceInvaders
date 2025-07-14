@@ -97,6 +97,16 @@ while program_running:
             for enemy in enemies:
                 if enemy.rect.colliderect(bullet.rect):
                     enemy.get_hit()
+                    if enemy.hp == 2:
+                        enemy.state = 1
+                        # tweak_projectiles = enemy.start_tweaking()
+                        # for proj in tweak_projectiles:
+                        #     if proj is not None:
+                        #         projectiles.append(proj)
+                    if enemy.hp == 1:
+                        enemy.state = 2
+                        enemy.is_diving = True
+                        
                     bullet.is_alive = False
 
         for projectile in projectiles:
@@ -108,8 +118,7 @@ while program_running:
             if projectile.rect.colliderect(player.rect):
                 player.get_hit()
                 projectile.is_alive = False
-                if player.hp == 0:
-                    game.state = 0
+                
 
         for enemy in enemies:
             if enemy.hp <= 0:
@@ -118,9 +127,27 @@ while program_running:
                 if rand == 2:
                     drop = enemy.drop_life()
                     drops.append(drop)
-
-        for enemy in enemies:
+            if enemy.rect.colliderect(player.rect):
+                player.get_hit()
+                
             enemy.move(delta)
+            
+            if enemy.state == 1:
+                tweak_projectiles = enemy.start_tweaking()
+                for proj in tweak_projectiles:
+                    if proj is not None:
+                        projectiles.append(proj)
+                enemy.state = 0
+            if enemy.state == 2:
+                
+                enemy.dive(delta)
+                enemy.ascend(delta)
+                if enemy.is_diving == False and enemy.is_ascending == False:
+                    enemy.state = 0
+                    # enemy.image = pygame.image.load("assets/enemy1_pink.png").convert_alpha()
+                    # enemy.image = pygame.transform.scale(enemy.image, (100, 50))
+                    
+            
 
         for drop in drops:
             drop.move(delta)
@@ -150,7 +177,10 @@ while program_running:
             screen.blit(projectile.image, projectile.rect)
         for drop in drops:
             screen.blit(drop.image, drop.rect)
+        
+        if player.hp == 0:
+            game.state = 0
 
         pygame.display.update()
-#pygame.quit()
+
 
