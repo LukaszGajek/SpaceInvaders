@@ -7,11 +7,16 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("assets/player.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (70, 35))
+        self.image = pygame.transform.scale(self.image, (70, 35)) 
         self.rect = self.image.get_rect()
+        #self.rect = self.rect.inflate(-20,-20)
+        self.rect.height *= 0.5
+        self.rect.left += self.rect.left*0.75
+        self.rect.right -= self.rect.right*0.75
         self.rect.left, self.rect.top = position
         self.last_shot_time = 0
-        self.hp = 3
+        self.hp = 20
+        self.last_hit_time = 0
 
     def shift_left(self, delta):
         self.rect.left -= 800 * delta
@@ -29,7 +34,10 @@ class Player(pygame.sprite.Sprite):
             return None
 
     def get_hit(self):
-        self.hp -= 1
+        delta = time.monotonic() - self.last_hit_time
+        if delta>0.5:
+            self.hp -= 1
+            self.last_hit_time = time.monotonic()
 
     def get_healed(self):
         self.hp += 1

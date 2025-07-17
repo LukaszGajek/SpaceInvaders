@@ -13,6 +13,7 @@ from space_invaders.game import Game
 pygame.init()
 program_running = True
 
+font = pygame.font.SysFont("Arial", 36)
 
 width, height = 1000, 500
 screen = pygame.display.set_mode((width, height))
@@ -55,8 +56,17 @@ while program_running:
 
     start = time.monotonic()
 
-    while game.state == 1:
+    licznik = 0
+    gamestart = 0
 
+    while game.state == 1:
+        if gamestart == 0:
+            gamestart = time.monotonic()
+        
+        licznik = round(time.monotonic() - gamestart)
+
+        liczniksurf = font.render(f"czas: {licznik}", True, 000)
+    
         last = start
         start = time.monotonic()
         delta = start - last
@@ -99,10 +109,7 @@ while program_running:
                     enemy.get_hit()
                     if enemy.hp == 2:
                         enemy.state = 1
-                        # tweak_projectiles = enemy.start_tweaking()
-                        # for proj in tweak_projectiles:
-                        #     if proj is not None:
-                        #         projectiles.append(proj)
+        
                     if enemy.hp == 1:
                         enemy.state = 2
                         enemy.is_diving = True
@@ -144,8 +151,7 @@ while program_running:
                 enemy.ascend(delta)
                 if enemy.is_diving == False and enemy.is_ascending == False:
                     enemy.state = 0
-                    # enemy.image = pygame.image.load("assets/enemy1_pink.png").convert_alpha()
-                    # enemy.image = pygame.transform.scale(enemy.image, (100, 50))
+                    
                     
             
 
@@ -177,6 +183,7 @@ while program_running:
             screen.blit(projectile.image, projectile.rect)
         for drop in drops:
             screen.blit(drop.image, drop.rect)
+        screen.blit(liczniksurf,(width - liczniksurf.get_width() - 20, 20))
         
         if player.hp == 0:
             game.state = 0
